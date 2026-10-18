@@ -1,11 +1,10 @@
 # setup.ps1 - Automated Setup for Antigravity & Agent Tooling
 
-$RepoRawUrl = "https://raw.githubusercontent.com/mtaufik84/startup-projects/main"
+$RepoRawUrl = "https://raw.githubusercontent.com/<USERNAME>/<REPO_NAME>/main"
 
 Write-Host ">>> Inisialisasi Ekosistem AI Agent..." -ForegroundColor Cyan
 
-# 1. Unduh file aturan kerja (AGENTS.md) ke root proyek
-# Di dalam setup.ps1, buat pengecekan sederhana ini:
+# 1. Unduh AGENTS.md (jika sudah ada di repo)
 try {
     Invoke-WebRequest -Uri "$RepoRawUrl/AGENTS.md" -OutFile "AGENTS.md" -ErrorAction Stop
     Write-Host "[1/5] Berhasil mengunduh AGENTS.md" -ForegroundColor Green
@@ -13,7 +12,7 @@ try {
     Write-Host "[1/5] AGENTS.md belum ada di repo, lewati langkah ini." -ForegroundColor Yellow
 }
 
-# 2. Pasang & Konfigurasi RTK (Token Optimization)
+# 2. Pasang & Hubungkan RTK (Rust Token Killer)
 Write-Host "[2/5] Menyiapkan RTK (Rust Token Killer)..." -ForegroundColor Yellow
 if (-not (Get-Command rtk -ErrorAction SilentlyContinue)) {
     winget install rtk-ai.rtk --accept-source-agreements --accept-package-agreements
@@ -23,25 +22,24 @@ if (Get-Command rtk -ErrorAction SilentlyContinue) {
 }
 
 # 3. Pasang Plugin Ponytail ke Antigravity CLI
-Write-Host "[3/5] Memasang plugin Ponytail untuk Antigravity..." -ForegroundColor Yellow
+Write-Host "[3/5] Memasang plugin Ponytail..." -ForegroundColor Yellow
 if (Get-Command agy -ErrorAction SilentlyContinue) {
     agy plugin install https://github.com/DietrichGebert/ponytail
-} else {
-    Write-Warning "Antigravity CLI ('agy') tidak ditemukan di active PATH."
 }
 
 # 4. Pasang Plugin Anti-Slop ke Antigravity CLI
-Write-Host "[4/5] Memasang plugin Anti-Slop untuk Antigravity..." -ForegroundColor Yellow
+Write-Host "[4/5] Memasang plugin Anti-Slop..." -ForegroundColor Yellow
 if (Get-Command agy -ErrorAction SilentlyContinue) {
     agy plugin install https://github.com/miqdadbadjuber/anti-slop
-} else {
-    Write-Warning "Antigravity CLI ('agy') tidak ditemukan di active PATH."
 }
 
-# 5. Pasang UI/UX Pro Max CLI (npm global)
-Write-Host "[5/5] Memastikan tool UI/UX CLI terpasang..." -ForegroundColor Yellow
-if (-not (Get-Command ui-ux-pro-max-cli -ErrorAction SilentlyContinue)) {
-    npm install -g ui-ux-pro-max-cli --registry=https://registry.npmjs.cf
+# 5. Pasang dan Inisialisasi UI/UX Pro Max untuk Antigravity
+Write-Host "[5/5] Menyiapkan UI/UX Pro Max..." -ForegroundColor Yellow
+if (-not (Get-Command uipro -ErrorAction SilentlyContinue)) {
+    npm install -g ui-ux-pro-max-cli
+}
+if (Get-Command uipro -ErrorAction SilentlyContinue) {
+    uipro init --ai antigravity
 }
 
-Write-Host ">>> Setup selesai! Aturan aktif di ./AGENTS.md dan semua plugin terpasang." -ForegroundColor Green
+Write-Host ">>> Setup selesai! Semua plugin dan skill siap digunakan." -ForegroundColor Green

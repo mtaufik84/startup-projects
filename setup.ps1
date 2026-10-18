@@ -1,6 +1,6 @@
 # setup.ps1 - Automated Setup for Antigravity & Agent Tooling
 
-$RepoRawUrl = "https://raw.githubusercontent.com/<USERNAME>/<REPO_NAME>/main"
+$RepoRawUrl = "https://raw.githubusercontent.com/mtaufik84/startup-projects/main"
 
 Write-Host ">>> Inisialisasi Ekosistem AI Agent..." -ForegroundColor Cyan
 

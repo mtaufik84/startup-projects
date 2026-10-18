@@ -12,13 +12,30 @@ try {
     Write-Host "[1/5] AGENTS.md belum ada di repo, lewati langkah ini." -ForegroundColor Yellow
 }
 
-# 2. Pasang & Hubungkan RTK (Rust Token Killer)
+# 2. Pasang & Konfigurasi RTK (Token Optimization)
 Write-Host "[2/5] Menyiapkan RTK (Rust Token Killer)..." -ForegroundColor Yellow
 if (-not (Get-Command rtk -ErrorAction SilentlyContinue)) {
+    Write-Host "Mengunduh RTK via winget..." -ForegroundColor Gray
     winget install rtk-ai.rtk --accept-source-agreements --accept-package-agreements
+    
+    # Segarkan PATH sesi terminal saat ini agar binary rtk langsung terbaca
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 }
+
+# Inisialisasi hook RTK untuk Antigravity
 if (Get-Command rtk -ErrorAction SilentlyContinue) {
+    Write-Host "Menginisialisasi hook RTK untuk Antigravity..." -ForegroundColor Gray
     rtk init --agent antigravity
+} else {
+    # Fallback lokasi instalasi default winget jika PATH masih belum sinkron
+    $rtkFallbackPath = "$env:LOCALAPPDATA\Microsoft\WinGet\Packages"
+    $rtkExe = Get-ChildItem -Path $rtkFallbackPath -Filter "rtk.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($rtkExe) {
+        Write-Host "Menginisialisasi hook via binary path langsung..." -ForegroundColor Gray
+        & $rtkExe.FullName init --agent antigravity
+    } else {
+        Write-Warning "Binary RTK belum terbaca di sesi ini. Jalankan 'rtk init --agent antigravity' setelah membuka terminal baru."
+    }
 }
 
 # 3. Pasang Plugin Ponytail ke Antigravity CLI
@@ -38,6 +55,10 @@ Write-Host "[5/5] Menyiapkan UI/UX Pro Max..." -ForegroundColor Yellow
 if (-not (Get-Command uipro -ErrorAction SilentlyContinue)) {
     npm install -g ui-ux-pro-max-cli
 }
+
+# Segarkan kembali PATH agar perintah uipro yang baru dipasang npm global langsung aktif
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
 if (Get-Command uipro -ErrorAction SilentlyContinue) {
     uipro init --ai antigravity
 }

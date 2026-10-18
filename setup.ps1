@@ -5,8 +5,13 @@ $RepoRawUrl = "https://raw.githubusercontent.com/mtaufik84/startup-projects/main
 Write-Host ">>> Inisialisasi Ekosistem AI Agent..." -ForegroundColor Cyan
 
 # 1. Unduh file aturan kerja (AGENTS.md) ke root proyek
-Write-Host "[1/5] Mengambil aturan global (AGENTS.md)..." -ForegroundColor Yellow
-Invoke-WebRequest -Uri "$RepoRawUrl/AGENTS.md" -OutFile "AGENTS.md"
+# Di dalam setup.ps1, buat pengecekan sederhana ini:
+try {
+    Invoke-WebRequest -Uri "$RepoRawUrl/AGENTS.md" -OutFile "AGENTS.md" -ErrorAction Stop
+    Write-Host "[1/5] Berhasil mengunduh AGENTS.md" -ForegroundColor Green
+} catch {
+    Write-Host "[1/5] AGENTS.md belum ada di repo, lewati langkah ini." -ForegroundColor Yellow
+}
 
 # 2. Pasang & Konfigurasi RTK (Token Optimization)
 Write-Host "[2/5] Menyiapkan RTK (Rust Token Killer)..." -ForegroundColor Yellow

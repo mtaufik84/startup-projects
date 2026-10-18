@@ -7,13 +7,13 @@ Write-Host ">>> Inisialisasi Ekosistem AI Agent..." -ForegroundColor Cyan
 # 1. Unduh AGENTS.md (jika sudah ada di repo)
 try {
     Invoke-WebRequest -Uri "$RepoRawUrl/AGENTS.md" -OutFile "AGENTS.md" -ErrorAction Stop
-    Write-Host "[1/5] Berhasil mengunduh AGENTS.md" -ForegroundColor Green
+    Write-Host "[1/6] Berhasil mengunduh AGENTS.md" -ForegroundColor Green
 } catch {
-    Write-Host "[1/5] AGENTS.md belum ada di repo, lewati langkah ini." -ForegroundColor Yellow
+    Write-Host "[1/6] AGENTS.md belum ada di repo, lewati langkah ini." -ForegroundColor Yellow
 }
 
 # 2. Pasang & Konfigurasi RTK (Token Optimization)
-Write-Host "[2/5] Menyiapkan RTK (Rust Token Killer)..." -ForegroundColor Yellow
+Write-Host "[2/6] Menyiapkan RTK (Rust Token Killer)..." -ForegroundColor Yellow
 if (-not (Get-Command rtk -ErrorAction SilentlyContinue)) {
     Write-Host "Mengunduh RTK via winget..." -ForegroundColor Gray
     winget install rtk-ai.rtk --accept-source-agreements --accept-package-agreements
@@ -39,13 +39,13 @@ if (Get-Command rtk -ErrorAction SilentlyContinue) {
 }
 
 # 3. Pasang Plugin Ponytail ke Antigravity CLI
-Write-Host "[3/5] Memasang plugin Ponytail..." -ForegroundColor Yellow
+Write-Host "[3/6] Memasang plugin Ponytail..." -ForegroundColor Yellow
 if (Get-Command agy -ErrorAction SilentlyContinue) {
     agy plugin install https://github.com/DietrichGebert/ponytail
 }
 
 # 4. Pasang Plugin Anti-Slop ke Antigravity CLI
-Write-Host "[4/5] Memasang plugin Anti-Slop..." -ForegroundColor Yellow
+Write-Host "[4/6] Memasang plugin Anti-Slop..." -ForegroundColor Yellow
 if (Get-Command agy -ErrorAction SilentlyContinue) {
     agy plugin install https://github.com/miqdadbadjuber/anti-slop
 }
@@ -63,4 +63,18 @@ if (Get-Command uipro -ErrorAction SilentlyContinue) {
     uipro init --ai antigravity
 }
 
-Write-Host ">>> Setup selesai! Semua plugin dan skill siap digunakan." -ForegroundColor Green
+# 6. Pembersihan Sub-Skill Redundan (Optimasi Context Window)
+Write-Host "[6/6] Membersihkan duplikasi sub-skill desain..." -ForegroundColor Yellow
+$skillsDir = ".agents\skills"
+if (Test-Path $skillsDir) {
+    $redundantSkills = @("banner-design", "slides", "brand", "design-system", "ui-styling")
+    foreach ($skill in $redundantSkills) {
+        $targetPath = Join-Path $skillsDir $skill
+        if (Test-Path $targetPath) {
+            Remove-Item -Recurse -Force $targetPath -ErrorAction SilentlyContinue
+            Write-Host "   - Menghapus sub-skill terduplikasi: $skill" -ForegroundColor Gray
+        }
+    }
+}
+
+Write-Host ">>> Setup selesai! Semua plugin dan skill siap digunakan secara optimal." -ForegroundColor Green
